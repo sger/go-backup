@@ -7,10 +7,12 @@ import (
 	"path/filepath"
 )
 
+// ZIP Global access to Archiver
 var ZIP Archiver = (*zipper)(nil)
 
 type zipper struct{}
 
+// Archiver Interface
 type Archiver interface {
 	Archive(src, dest string) error
 }
