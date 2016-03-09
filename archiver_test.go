@@ -20,7 +20,7 @@ func TestZipArchive(t *testing.T) {
 	setup(t)
 	defer teardown(t)
 
-	err := backup.ZIP.Archive("test/hash1", "test/output/1.zip")
+	err := backup.ZIP.Archive("test/files", "test/output/files.zip")
 	require.NoError(t, err)
 }
 
