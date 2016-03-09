@@ -43,3 +43,7 @@ func (a *TestArchiver) Archive(src, dest string) error {
 	a.Archives = append(a.Archives, &call{Src: src, Dest: dest})
 	return nil
 }
+
+func (a *TestArchiver) Restore(src, dest string) error {
+	return nil
+}

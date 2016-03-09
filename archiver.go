@@ -11,7 +11,12 @@ type zipper struct{}
 
 // Archiver Interface
 type Archiver interface {
+	DestFmt() string
 	Archive(src, dest string) error
+}
+
+func (z *zipper) DestFmt() string {
+	return "%d.zip"
 }
 
 func (z *zipper) Archive(src, dest string) error {
@@ -57,6 +62,10 @@ func (z *zipper) Archive(src, dest string) error {
 		io.Copy(f, in)
 		return nil
 	})
+}
+
+func (z *zipper) Restore(src, dest string) error {
+	return nil
 }
 
 // ZIP Global access to Archiver
