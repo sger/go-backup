@@ -9,8 +9,6 @@ import (
 	"sync"
 )
 
-type zipper struct{}
-
 // Archiver Interface
 type Archiver interface {
 	DestFmt() string
@@ -18,11 +16,11 @@ type Archiver interface {
 	Restore(src, dest string) error
 }
 
-func (z *zipper) DestFmt() string {
+func (z *Zip) DestFmt() string {
 	return "%d.zip"
 }
 
-func (z *zipper) Archive(src, dest string) error {
+func (z *Zip) Archive(src, dest string) error {
 	if err := os.MkdirAll(filepath.Dir(dest), 0777); err != nil {
 		return err
 	}
@@ -67,7 +65,7 @@ func (z *zipper) Archive(src, dest string) error {
 	})
 }
 
-func (z *zipper) Restore(src, dest string) error {
+func (z *Zip) Restore(src, dest string) error {
 	r, err := zip.OpenReader(src)
 
 	if err != nil {
@@ -130,4 +128,4 @@ func (z *zipper) Restore(src, dest string) error {
 }
 
 // ZIP Global access to Archiver
-var ZIP Archiver = (*zipper)(nil)
+var ZIP Archiver = (*Zip)(nil)
