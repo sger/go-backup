@@ -91,7 +91,7 @@ func (z *Zip) Restore(src, dest string) error {
 	for _, f := range r.File {
 		w.Add(1)
 		go func(f *zip.File) {
-			zippedfile, err := f.Open()
+			zippedFile, err := f.Open()
 			if err != nil {
 				errChan <- err
 				w.Done()
@@ -106,14 +106,14 @@ func (z *Zip) Restore(src, dest string) error {
 			}
 			newFile, err := os.Create(toFilename)
 			if err != nil {
-				zippedfile.Close()
+				zippedFile.Close()
 				errChan <- err
 				w.Done()
 				return
 			}
-			_, err = io.Copy(newFile, zippedfile)
+			_, err = io.Copy(newFile, zippedFile)
 			newFile.Close()
-			zippedfile.Close()
+			zippedFile.Close()
 			if err != nil {
 				errChan <- err
 				w.Done()
