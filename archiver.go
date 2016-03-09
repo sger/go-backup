@@ -15,6 +15,7 @@ type zipper struct{}
 type Archiver interface {
 	DestFmt() string
 	Archive(src, dest string) error
+	Restore(src, dest string) error
 }
 
 func (z *zipper) DestFmt() string {
