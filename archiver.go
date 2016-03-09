@@ -11,15 +11,17 @@ import (
 
 // Archiver Interface
 type Archiver interface {
-	DestFmt() string
+	Name() string
 	Archive(src, dest string) error
 	Restore(src, dest string) error
 }
 
-func (z *Zip) DestFmt() string {
+// Name describes the name of the zip file
+func (z *Zip) Name() string {
 	return "%d.zip"
 }
 
+// Archive a directory 2 paramaters required the source file and the destination
 func (z *Zip) Archive(src, dest string) error {
 	if err := os.MkdirAll(filepath.Dir(dest), 0777); err != nil {
 		return err
@@ -65,6 +67,7 @@ func (z *Zip) Archive(src, dest string) error {
 	})
 }
 
+// Restore a directory 2 paramaters required the source file and the destination
 func (z *Zip) Restore(src, dest string) error {
 	r, err := zip.OpenReader(src)
 
