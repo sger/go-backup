@@ -7,9 +7,6 @@ import (
 	"path/filepath"
 )
 
-// ZIP Global access to Archiver
-var ZIP Archiver = (*zipper)(nil)
-
 type zipper struct{}
 
 // Archiver Interface
@@ -61,3 +58,6 @@ func (z *zipper) Archive(src, dest string) error {
 		return nil
 	})
 }
+
+// ZIP Global access to Archiver
+var ZIP Archiver = (*zipper)(nil)
