@@ -1,1 +1,3 @@
-# podule
+# Podule
+
+Simple backup CLI
