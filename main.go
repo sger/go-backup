@@ -1,5 +1,0 @@
-package podule
-
-func main() {
-
-}

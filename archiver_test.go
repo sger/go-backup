@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/sger/backup"
+	"github.com/sger/podule"
 	"github.com/stretchr/testify/require"
 )
 
@@ -37,9 +38,9 @@ type TestArchiver struct {
 	Restores []*call
 }
 
-var _ backup.Archiver = (*TestArchiver)(nil)
+var _ podule.Archiver = (*TestArchiver)(nil)
 
-func (a *TestArchiver) DestFmt() string {
+func (a *TestArchiver) Name() string {
 	return "%d.zip"
 }
 
