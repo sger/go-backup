@@ -10,13 +10,8 @@ import (
 	"strings"
 
 	"github.com/boltdb/bolt"
+	"github.com/sger/podule"
 )
-
-type path struct {
-	ID   int
-	Path string
-	Hash string
-}
 
 func main() {
 	var fatalErr error
@@ -75,17 +70,18 @@ func main() {
 		}
 
 		db.Update(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte("paths"))
-			for _, p := range args[1:] {
-				path := &path{Path: p, Hash: ""}
 
-				// Generate ID for the user.
-				// This returns an error only if the Tx is closed or not writeable.
-				// That can't happen in an Update() call so I ignore the error check.
+			b := tx.Bucket([]byte("paths"))
+
+			for _, p := range args[1:] {
+
+				path := &podule.Path{Path: p, Hash: ""}
+
 				id, err := b.NextSequence()
 				if err != nil {
 					return err
 				}
+
 				path.ID = int(id)
 
 				// Marshal user data into bytes.
@@ -94,17 +90,10 @@ func main() {
 					return err
 				}
 
-				//fmt.Println(path.Path)
-				//h := sha256.New()
-				//s := fmt.Sprintf("%v", path)
-				//sum := h.Sum([]byte(s))
-				//fmt.Printf("%s hashes to %x", s, sum)
-				fmt.Println(itob(path.ID))
 				err = b.Put(itob(path.ID), buf)
 				if err != nil {
 					return err
 				}
-
 			}
 
 			return nil
