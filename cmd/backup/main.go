@@ -30,7 +30,9 @@ func main() {
 		fatalErr = errors.New("invalid usage; must specify command")
 		return
 	}
-	fmt.Println(*dbpath)
+
+	fmt.Println(args)
+	fmt.Println(dbpath)
 
 	db, err := bolt.Open(*dbpath, 0600, nil)
 	if err != nil {
@@ -52,18 +54,21 @@ func main() {
 	}
 	switch strings.ToLower(args[0]) {
 	case "list":
-		fmt.Println("Display list")
 		db.View(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte("paths"))
 
+			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
-				fmt.Printf("key=%v, value=%s\n", k, v)
+				//fmt.Printf("key=%v, value=%s\n", k, v)
+				if err := json.Unmarshal(v, &path); err != nil {
+					fmt.Println(err)
+				}
+				fmt.Printf("= %v\n", path)
 				return nil
 			})
 			return nil
 		})
 	case "add":
-		fmt.Println("add")
 		if len(args[1:]) == 0 {
 			fatalErr = errors.New("must specify path to add")
 			return
@@ -75,7 +80,7 @@ func main() {
 
 			for _, p := range args[1:] {
 
-				path := &podule.Path{Path: p, Hash: ""}
+				path := &podule.Path{Path: p, Hash: "Not yet archived"}
 
 				id, err := b.NextSequence()
 				if err != nil {
