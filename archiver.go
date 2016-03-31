@@ -2,7 +2,6 @@ package podule
 
 import (
 	"archive/zip"
-	"fmt"
 	"io"
 	"os"
 	"path"
@@ -41,9 +40,6 @@ func (z *Zip) Archive(src, dest string) error {
 	defer w.Close()
 
 	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
-		fmt.Println(src)
-		fmt.Println(path)
-		fmt.Println(info.IsDir())
 		if info.IsDir() {
 			return nil
 		}
