@@ -35,9 +35,6 @@ func main() {
 		dbpath   = flag.String("db", "./backupdata", "path to database directory")
 	)
 	flag.Parse()
-	fmt.Println(*dbpath)
-	fmt.Println(*archive)
-	fmt.Println(*interval)
 
 	m := &podule.Monitor{
 		Destination: *archive,
@@ -56,12 +53,12 @@ func main() {
 		b := tx.Bucket([]byte("paths"))
 		var path podule.Path
 		b.ForEach(func(k, v []byte) error {
-			fmt.Printf("key=%v, value=%s\n", k, v)
+			//fmt.Printf("key=%v, value=%s\n", k, v)
 			if err := json.Unmarshal(v, &path); err != nil {
 				fatalErr = err
 				return fatalErr
 			}
-			fmt.Println(path.Hash)
+			//fmt.Println(path.Hash)
 			m.Paths[path.Path] = path.Hash
 			return nil
 		})
@@ -79,17 +76,58 @@ func main() {
 
 	check(m, db)
 	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-	for {
+
+	go func() {
+		for sig := range signalChan {
+			log.Printf("captured %v, stopping profiler and exiting..", sig)
+			//pprof.StopCPUProfile()
+			//os.Exit(1)
+			fmt.Println("\nReceived an interrupt, stopping services...")
+			os.Exit(1)
+
+		}
+	}()
+
+	/*for {
 		select {
 		case <-time.After(time.Duration(*interval) * time.Second):
 			check(m, db)
 		case <-signalChan:
-			fmt.Println("stopping...")
-			goto stop
+			fmt.Println("!!!")
+			//goto stop
+		}
+	}*/
+	//stop:
+
+	fmt.Println(interval)
+	timeChan := time.NewTimer(time.Second).C
+
+	//tickChan := time.NewTicker(time.Millisecond * 400).C
+	tickChan := time.NewTicker(time.Duration(*interval) * time.Second).C
+
+	doneChan := make(chan bool)
+	go func() {
+
+		time.Sleep(time.Second * 2)
+
+		//doneChan <- true
+	}()
+
+	for {
+		fmt.Println("running...")
+		select {
+		case <-timeChan:
+			fmt.Println("Timer expired")
+		case <-tickChan:
+			fmt.Println("Ticker ticked")
+			check(m, db)
+		case <-doneChan:
+			fmt.Println("Done")
+			return
 		}
 	}
-stop:
 }
 
 func check(m *podule.Monitor, db *bolt.DB) {
@@ -102,12 +140,12 @@ func check(m *podule.Monitor, db *bolt.DB) {
 
 	if counter > 0 {
 		log.Printf("  Archived %d directories\n", counter)
+
+		var newData []byte
+
 		db.View(func(tx *bolt.Tx) error {
-
 			b := tx.Bucket([]byte("paths"))
-
 			c := b.Cursor()
-
 			var path podule.Path
 			for k, v := c.First(); k != nil; k, v = c.Next() {
 				fmt.Printf("key=%v, value=%s\n", k, v)
@@ -115,27 +153,39 @@ func check(m *podule.Monitor, db *bolt.DB) {
 					log.Println("failed to unmarshal data (skipping):", err)
 				}
 				path.Hash, _ = m.Paths[path.Path]
-				fmt.Println("path ", path)
-				newData, err := json.Marshal(&path)
+				//fmt.Println("path ", path)
+				newData, err = json.Marshal(&path)
 				if err != nil {
 					log.Println("failed to marshal data (skipping):", err)
 				}
-				fmt.Println(newData)
-
-				db.Update(func(tx *bolt.Tx) error {
-					b := tx.Bucket([]byte("paths"))
-
-					err = b.Put(itob(path.ID), newData)
-					if err != nil {
-						return err
-					}
-
-					return err
-				})
 			}
+			fmt.Println("exit 1")
+			return nil
+		})
+
+		fmt.Println(newData)
+
+		db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte("paths"))
+			var path podule.Path
+			b.ForEach(func(k, v []byte) error {
+				fmt.Printf("key=%v, value=%s\n", k, v)
+				if err := json.Unmarshal(v, &path); err != nil {
+					fmt.Println(err)
+				}
+				fmt.Printf("= %v\n", path)
+				err = b.Put(itob(path.ID), newData)
+				if err != nil {
+					fmt.Println(err)
+					return err
+				}
+				return nil
+			})
 
 			return nil
 		})
+
+		fmt.Println("exit 2")
 	} else {
 		log.Println("  No changes")
 	}
