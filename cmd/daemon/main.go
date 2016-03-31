@@ -75,20 +75,6 @@ func main() {
 	}
 
 	check(m, db)
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		for sig := range signalChan {
-			log.Printf("captured %v, stopping profiler and exiting..", sig)
-			//pprof.StopCPUProfile()
-			//os.Exit(1)
-			fmt.Println("\nReceived an interrupt, stopping services...")
-			os.Exit(1)
-
-		}
-	}()
 
 	/*for {
 		select {
@@ -113,6 +99,24 @@ func main() {
 		time.Sleep(time.Second * 2)
 
 		//doneChan <- true
+	}()
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		for sig := range signalChan {
+
+			doneChan <- true
+
+			log.Printf("captured %v, stopping profiler and exiting..", sig)
+			//pprof.StopCPUProfile()
+			//os.Exit(1)
+			fmt.Println("\nReceived an interrupt, stopping services...")
+			os.Exit(1)
+
+		}
 	}()
 
 	for {
