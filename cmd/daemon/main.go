@@ -1,11 +1,16 @@
 package main
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/sger/podule"
@@ -73,18 +78,18 @@ func main() {
 	}
 
 	check(m, db)
-	/*signalChan := make(chan os.Signal, 1)
-		signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-		for {
-			select {
-			case <-time.After(time.Duration(5) * time.Second):
-				check(m, db)
-			case <-signalChan:
-				fmt.Println("stopping...")
-				goto stop
-			}
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+	for {
+		select {
+		case <-time.After(time.Duration(*interval) * time.Second):
+			check(m, db)
+		case <-signalChan:
+			fmt.Println("stopping...")
+			goto stop
 		}
-	stop:*/
+	}
+stop:
 }
 
 func check(m *podule.Monitor, db *bolt.DB) {
@@ -97,7 +102,7 @@ func check(m *podule.Monitor, db *bolt.DB) {
 
 	if counter > 0 {
 		log.Printf("  Archived %d directories\n", counter)
-		/*db.View(func(tx *bolt.Tx) error {
+		db.View(func(tx *bolt.Tx) error {
 
 			b := tx.Bucket([]byte("paths"))
 
@@ -110,16 +115,34 @@ func check(m *podule.Monitor, db *bolt.DB) {
 					log.Println("failed to unmarshal data (skipping):", err)
 				}
 				path.Hash, _ = m.Paths[path.Path]
+				fmt.Println("path ", path)
 				newData, err := json.Marshal(&path)
 				if err != nil {
 					log.Println("failed to marshal data (skipping):", err)
 				}
 				fmt.Println(newData)
+
+				db.Update(func(tx *bolt.Tx) error {
+					b := tx.Bucket([]byte("paths"))
+
+					err = b.Put(itob(path.ID), newData)
+					if err != nil {
+						return err
+					}
+
+					return err
+				})
 			}
 
 			return nil
-		})*/
+		})
 	} else {
 		log.Println("  No changes")
 	}
+}
+
+func itob(v int) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(v))
+	return b
 }
