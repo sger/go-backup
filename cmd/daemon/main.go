@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime/pprof"
 	"syscall"
 	"time"
 
@@ -76,29 +77,14 @@ func main() {
 
 	check(m, db)
 
-	/*for {
-		select {
-		case <-time.After(time.Duration(*interval) * time.Second):
-			check(m, db)
-		case <-signalChan:
-			fmt.Println("!!!")
-			//goto stop
-		}
-	}*/
-	//stop:
-
 	fmt.Println(interval)
 	timeChan := time.NewTimer(time.Second).C
 
-	//tickChan := time.NewTicker(time.Millisecond * 400).C
 	tickChan := time.NewTicker(time.Duration(*interval) * time.Second).C
 
 	doneChan := make(chan bool)
 	go func() {
-
 		time.Sleep(time.Second * 2)
-
-		//doneChan <- true
 	}()
 
 	signalChan := make(chan os.Signal, 1)
@@ -111,8 +97,7 @@ func main() {
 			doneChan <- true
 
 			log.Printf("captured %v, stopping profiler and exiting..", sig)
-			//pprof.StopCPUProfile()
-			//os.Exit(1)
+			pprof.StopCPUProfile()
 			fmt.Println("\nReceived an interrupt, stopping services...")
 			os.Exit(1)
 
