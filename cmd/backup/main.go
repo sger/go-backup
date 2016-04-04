@@ -116,31 +116,27 @@ func main() {
 			return nil
 		})
 	case "remove":
-		fmt.Println("remove")
+
 		if len(args[1:]) == 0 {
-			fatalErr = errors.New("must specify key id to remove")
+			fatalErr = errors.New("specify key id to remove")
 			return
 		}
 		db.Update(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte("paths"))
-			//id := 1
+
 			id, err := strconv.Atoi(args[1:][0])
 			if err != nil {
-
+				fmt.Println(err)
 			}
-			fmt.Println(id)
 
 			if b.Get(itob(id)) != nil {
-				fmt.Println("value exists")
 				err = b.Delete(itob(id))
 				if err != nil {
-					fatalErr = errors.New("rwerwerwe")
+					fmt.Println(err)
 				}
 			} else {
-				fmt.Println("value not exists")
+				fmt.Println("key not exists")
 			}
-
-			//fmt.Printf("The answer is: %s\n", v)
 			return err
 		})
 	}
