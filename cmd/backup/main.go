@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/boltdb/bolt"
@@ -64,7 +65,7 @@ func main() {
 
 			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
-				//fmt.Printf("key=%v, value=%s\n", k, v)
+				fmt.Printf("key=%v, value=%s\n", k, v)
 				if err := json.Unmarshal(v, &path); err != nil {
 					fmt.Println(err)
 				}
@@ -116,6 +117,32 @@ func main() {
 		})
 	case "remove":
 		fmt.Println("remove")
+		if len(args[1:]) == 0 {
+			fatalErr = errors.New("must specify key id to remove")
+			return
+		}
+		db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte("paths"))
+			//id := 1
+			id, err := strconv.Atoi(args[1:][0])
+			if err != nil {
+
+			}
+			fmt.Println(id)
+
+			if b.Get(itob(id)) != nil {
+				fmt.Println("value exists")
+				err = b.Delete(itob(id))
+				if err != nil {
+					fatalErr = errors.New("rwerwerwe")
+				}
+			} else {
+				fmt.Println("value not exists")
+			}
+
+			//fmt.Printf("The answer is: %s\n", v)
+			return err
+		})
 	}
 }
 
