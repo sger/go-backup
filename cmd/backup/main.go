@@ -7,9 +7,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/boltdb/bolt"
+	"github.com/olekukonko/tablewriter"
 	"github.com/sger/podule"
 )
 
@@ -57,6 +59,9 @@ func main() {
 		db.View(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte("paths"))
 
+			table := tablewriter.NewWriter(os.Stdout)
+			table.SetHeader([]string{"ID", "PATH", "HASH"})
+
 			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
 				//fmt.Printf("key=%v, value=%s\n", k, v)
@@ -64,8 +69,14 @@ func main() {
 					fmt.Println(err)
 				}
 				fmt.Printf("= %v\n", path)
+
+				table.Append([]string{fmt.Sprintf("%d", path.ID), path.Path, path.Hash})
+
 				return nil
 			})
+
+			table.Render()
+
 			return nil
 		})
 	case "add":
