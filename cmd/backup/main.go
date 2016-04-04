@@ -27,15 +27,13 @@ func main() {
 	var (
 		dbpath = flag.String("db", "./backupdata", "path to database directory")
 	)
+
 	flag.Parse()
 	args := flag.Args()
 	if len(args) < 1 {
 		fatalErr = errors.New("invalid usage; must specify command")
 		return
 	}
-
-	fmt.Println(args)
-	fmt.Println(dbpath)
 
 	db, err := bolt.Open(*dbpath, 0600, nil)
 	if err != nil {
@@ -63,20 +61,28 @@ func main() {
 			table := tablewriter.NewWriter(os.Stdout)
 			table.SetHeader([]string{"ID", "PATH", "HASH"})
 
+			data := [][]string{}
+
 			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
-				fmt.Printf("key=%v, value=%s\n", k, v)
+
+				//fmt.Printf("key=%v, value=%s\n", k, v)
 				if err := json.Unmarshal(v, &path); err != nil {
 					fmt.Println(err)
 				}
-				fmt.Printf("= %v\n", path)
+				//fmt.Printf("= %v\n", path)
 
+				data = append(data, []string{fmt.Sprintf("%d", path.ID), path.Path, path.Hash})
 				table.Append([]string{fmt.Sprintf("%d", path.ID), path.Path, path.Hash})
 
 				return nil
 			})
 
-			table.Render()
+			if len(data) > 0 {
+				table.Render()
+			} else {
+				fmt.Println("no data found")
+			}
 
 			return nil
 		})
@@ -101,7 +107,6 @@ func main() {
 
 				path.ID = int(id)
 
-				// Marshal user data into bytes.
 				buf, err := json.Marshal(path)
 				if err != nil {
 					return err
