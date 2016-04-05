@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -142,17 +141,13 @@ func check(m *podule.Monitor, db *bolt.DB) {
 					log.Println("failed to unmarshal data (skipping):", err)
 				}
 				path.Hash, _ = m.Paths[path.Path]
-				//fmt.Println("path ", path)
 				newData, err = json.Marshal(&path)
 				if err != nil {
 					log.Println("failed to marshal data (skipping):", err)
 				}
 			}
-			fmt.Println("exit 1")
 			return nil
 		})
-
-		fmt.Println(newData)
 
 		db.Update(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte("paths"))
@@ -163,25 +158,15 @@ func check(m *podule.Monitor, db *bolt.DB) {
 					fmt.Println(err)
 				}
 				fmt.Printf("= %v\n", path)
-				err = b.Put(itob(path.ID), newData)
+				err = b.Put(podule.Itob(path.ID), newData)
 				if err != nil {
-					fmt.Println(err)
 					return err
 				}
 				return nil
 			})
-
 			return nil
 		})
-
-		fmt.Println("exit 2")
 	} else {
 		log.Println("  No changes")
 	}
-}
-
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
 }

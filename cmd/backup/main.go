@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -112,7 +111,7 @@ func main() {
 					return err
 				}
 
-				err = b.Put(itob(path.ID), buf)
+				err = b.Put(podule.Itob(path.ID), buf)
 				if err != nil {
 					return err
 				}
@@ -134,8 +133,8 @@ func main() {
 				fmt.Println(err)
 			}
 
-			if b.Get(itob(id)) != nil {
-				err = b.Delete(itob(id))
+			if b.Get(podule.Itob(id)) != nil {
+				err = b.Delete(podule.Itob(id))
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -145,10 +144,4 @@ func main() {
 			return err
 		})
 	}
-}
-
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
 }
