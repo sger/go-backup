@@ -50,7 +50,7 @@ func main() {
 	defer db.Close()
 
 	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("paths"))
+		b := tx.Bucket([]byte(podule.BACKUPS_DIR))
 		var path podule.Path
 		b.ForEach(func(k, v []byte) error {
 			//fmt.Printf("key=%v, value=%s\n", k, v)
@@ -132,7 +132,7 @@ func check(m *podule.Monitor, db *bolt.DB) {
 		var newData []byte
 
 		db.View(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte("paths"))
+			b := tx.Bucket([]byte(podule.BACKUPS_DIR))
 			c := b.Cursor()
 			var path podule.Path
 			for k, v := c.First(); k != nil; k, v = c.Next() {
@@ -150,7 +150,7 @@ func check(m *podule.Monitor, db *bolt.DB) {
 		})
 
 		db.Update(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte("paths"))
+			b := tx.Bucket([]byte(podule.BACKUPS_DIR))
 			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
 				fmt.Printf("key=%v, value=%s\n", k, v)
