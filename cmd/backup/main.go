@@ -65,11 +65,9 @@ func main() {
 			var path podule.Path
 			b.ForEach(func(k, v []byte) error {
 
-				//fmt.Printf("key=%v, value=%s\n", k, v)
 				if err := json.Unmarshal(v, &path); err != nil {
 					fmt.Println(err)
 				}
-				//fmt.Printf("= %v\n", path)
 
 				data = append(data, []string{fmt.Sprintf("%d", path.ID), path.Path, path.Hash})
 				table.Append([]string{fmt.Sprintf("%d", path.ID), path.Path, path.Hash})
@@ -80,7 +78,7 @@ func main() {
 			if len(data) > 0 {
 				table.Render()
 			} else {
-				fmt.Println("no data found")
+				fmt.Println("no backups found")
 			}
 
 			return nil
@@ -88,7 +86,7 @@ func main() {
 	case "add":
 
 		if len(args[1:]) == 0 {
-			fatalErr = errors.New("must specify path to add")
+			fatalErr = errors.New("add a path to backup")
 			return
 		}
 
