@@ -42,7 +42,7 @@ func main() {
 	defer db.Close()
 
 	db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(podule.BACKUPS_DIR))
+		_, err := tx.CreateBucketIfNotExists([]byte(podule.BackupsDir))
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)
 		}
@@ -55,7 +55,7 @@ func main() {
 	switch strings.ToLower(args[0]) {
 	case "list":
 		db.View(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte(podule.BACKUPS_DIR))
+			b := tx.Bucket([]byte(podule.BackupsDir))
 
 			table := tablewriter.NewWriter(os.Stdout)
 			table.SetHeader([]string{"ID", "PATH", "HASH"})
@@ -92,7 +92,7 @@ func main() {
 
 		db.Update(func(tx *bolt.Tx) error {
 
-			b := tx.Bucket([]byte(podule.BACKUPS_DIR))
+			b := tx.Bucket([]byte(podule.BackupsDir))
 
 			for _, p := range args[1:] {
 
@@ -125,7 +125,7 @@ func main() {
 			return
 		}
 		db.Update(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte(podule.BACKUPS_DIR))
+			b := tx.Bucket([]byte(podule.BackupsDir))
 
 			id, err := strconv.Atoi(args[1:][0])
 			if err != nil {
