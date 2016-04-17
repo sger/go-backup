@@ -8,12 +8,14 @@ import (
 	hashdir "github.com/sger/go-hashdir"
 )
 
+// Monitor ...
 type Monitor struct {
 	Paths       map[string]string
 	Destination string
 	Archiver    Archiver
 }
 
+// Now ...
 func (m *Monitor) Now() (int, error) {
 	var counter int
 	for path, lastHash := range m.Paths {
@@ -34,6 +36,7 @@ func (m *Monitor) Now() (int, error) {
 	return counter, nil
 }
 
+// Act ...
 func (m *Monitor) Act(path string) error {
 	fmt.Println("path ", path)
 	//dirName := filepath.Base(path)
