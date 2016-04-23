@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sger/backup"
 	"github.com/sger/podule"
 	"github.com/stretchr/testify/require"
 )
@@ -21,10 +20,10 @@ func TestZipArchive(t *testing.T) {
 	setup(t)
 	defer teardown(t)
 
-	err := backup.ZIP.Archive("test/files", "test/output/files.zip")
+	err := podule.ZIP.Archive("test/files", "test/output/files.zip")
 	require.NoError(t, err)
 
-	err = backup.ZIP.Restore("test/output/files.zip", "test/output/restored")
+	err = podule.ZIP.Restore("test/output/files.zip", "test/output/restored")
 	require.NoError(t, err)
 }
 
