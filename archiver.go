@@ -98,7 +98,7 @@ func (z *Zip) Restore(src, dest string) error {
 				return
 			}
 			toFilename := path.Join(dest, f.Name)
-			err = os.Mkdir(path.Dir(toFilename), 0777)
+			err = os.MkdirAll(path.Dir(toFilename), 0777)
 			if err != nil {
 				errChan <- err
 				w.Done()
