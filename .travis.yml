@@ -13,6 +13,7 @@ before_install:
 
 install:
   - go get -t
+  - go get github.com/sger/go-hashdir
 
 script:
   - go vet
