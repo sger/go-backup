@@ -4,3 +4,16 @@
 # Podule
 
 Simple backup CLI
+
+Author
+-----
+
+__Spiros Gerokostas__ 
+
+- [![](https://img.shields.io/badge/twitter-sger-brightgreen.svg)](https://twitter.com/sger) 
+- :email: spiros.gerokostas@gmail.com
+
+License
+-----
+
+Go Apns2 is available under the MIT license. See the LICENSE file for more info.
