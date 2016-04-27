@@ -136,4 +136,4 @@ func (z *Zip) Restore(src, dest string) error {
 }
 
 // ZIP Global access to Archiver
-var ZIP Archiver = (*Zip)(nil)
+//var ZIP Archiver = (*Zip)(nil)

@@ -20,10 +20,10 @@ func TestZipArchive(t *testing.T) {
 	setup(t)
 	defer teardown(t)
 
-	err := podule.ZIP.Archive("test/files", "test/output/files.zip")
+	err := podule.GetInstance().Archive("test/files", "test/output/files.zip")
 	require.NoError(t, err)
 
-	err = podule.ZIP.Restore("test/output/files.zip", "test/output/restored")
+	err = podule.GetInstance().Restore("test/output/files.zip", "test/output/restored")
 	require.NoError(t, err)
 }
 
