@@ -23,6 +23,11 @@ func (z *Zip) Name() string {
 
 // Archive a directory 2 parameters required the source file and the destination
 func (z *Zip) Archive(src, dest string) error {
+	// check if directory exists
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return err
+	}
+
 	if err := os.MkdirAll(filepath.Dir(dest), 0777); err != nil {
 		return err
 	}
