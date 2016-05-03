@@ -1,30 +1,35 @@
 package podule_test
 
 import (
-	"os"
+	"strings"
 	"testing"
 
+	"github.com/sger/archiver"
 	"github.com/sger/podule"
 	"github.com/stretchr/testify/require"
 )
 
-func setup(t *testing.T) {
-	os.MkdirAll("test/output", 0777)
-}
+func TestMonitor(t *testing.T) {
+	a := &TestArchiver{}
+	m := &podule.Monitor{
+		Destination: "test/archive",
+		Paths: map[string]string{
+			"test/hash1": "abc",
+			"test/hash2": "def",
+		},
+		Archiver: a,
+	}
 
-func teardown(t *testing.T) {
-	os.RemoveAll("test/output")
-}
-
-func TestZipArchive(t *testing.T) {
-	setup(t)
-	defer teardown(t)
-
-	err := podule.GetInstance().Archive("test/files", "test/output/files.zip")
+	n, err := m.Now()
 	require.NoError(t, err)
+	require.Equal(t, 2, n)
 
-	err = podule.GetInstance().Restore("test/output/files.zip", "test/output/restored")
-	require.NoError(t, err)
+	require.Equal(t, 2, len(a.Archives))
+
+	for _, call := range a.Archives {
+		require.True(t, strings.HasPrefix(call.Dest, m.Destination))
+		require.True(t, strings.HasSuffix(call.Dest, ".zip"))
+	}
 }
 
 type call struct {
@@ -37,7 +42,7 @@ type TestArchiver struct {
 	Restores []*call
 }
 
-var _ podule.Archiver = (*TestArchiver)(nil)
+var _ archiver.Archiver = (*TestArchiver)(nil)
 
 func (a *TestArchiver) Name() string {
 	return "%d.zip"
