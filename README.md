@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/sger/podule.svg?branch=master)](https://travis-ci.org/sger/podule)
 [![Coverage Status](https://coveralls.io/repos/github/sger/podule/badge.svg?branch=master)](https://coveralls.io/github/sger/podule?branch=master)
 
-# Podule
+# Go Backup
 
 Simple backup CLI
 
@@ -16,4 +16,4 @@ __Spiros Gerokostas__
 License
 -----
 
-Go Apns2 is available under the MIT license. See the LICENSE file for more info.
+Go Backup is available under the MIT license. See the LICENSE file for more info.
