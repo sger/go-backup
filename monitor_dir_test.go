@@ -1,17 +1,17 @@
-package podule_test
+package backup_test
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/sger/archiver"
-	"github.com/sger/podule"
+	"github.com/sger/go-archiver"
+	backup "github.com/sger/go-backup"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMonitor(t *testing.T) {
 	a := &TestArchiver{}
-	m := &podule.Monitor{
+	m := &backup.Monitor{
 		Destination: "test/archive",
 		Paths: map[string]string{
 			"test/hash1": "abc",

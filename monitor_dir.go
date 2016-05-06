@@ -1,11 +1,11 @@
-package podule
+package backup
 
 import (
 	"fmt"
 	"path/filepath"
 	"time"
 
-	"github.com/sger/archiver"
+	"github.com/sger/go-archiver"
 	hashdir "github.com/sger/go-hashdir"
 )
 
