@@ -39,8 +39,6 @@ func (m *Monitor) Now() (int, error) {
 
 // Act ...
 func (m *Monitor) Act(path string) error {
-	//dirName := filepath.Base(path)
 	fileName := fmt.Sprintf(m.Archiver.Name(), time.Now().UnixNano())
 	return m.Archiver.Archive(path, filepath.Join(m.Destination, "", fileName))
-	//return m.Archiver.Archive(path, filepath.Join(m.Destination, dirName, fileName))
 }
